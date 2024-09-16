@@ -1,0 +1,18 @@
+cabal-version: 3.0
+name:          haskell-accumulator
+version:       1.0.0.0
+license:       Apache-2.0
+author:        Thomas Vellekoop
+maintainer:    thomas.vellekoop@iohk.io
+synopsis:      "Haskell bindings for the rust accumulator lib via C"
+build-type:    Simple
+
+library haskell-accumulator-lib
+  exposed-modules:   Bindings
+  hs-source-dirs:    lib
+  default-language:  Haskell2010
+  build-depends:
+    , base >=4.2 && <5
+    , cardano-crypto-class
+
+  pkgconfig-depends: librust_accumulator
