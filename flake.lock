@@ -3,11 +3,11 @@
     "CHaP": {
       "flake": false,
       "locked": {
-        "lastModified": 1726477316,
-        "narHash": "sha256-voeN1tTUCPYmU5qBxSftKMseYHBjrDsLKkVvpFZjLOg=",
+        "lastModified": 1726511307,
+        "narHash": "sha256-sF62qOJCRlQZT8NYG+xGCl8Or3N7iRUR4D8oDHnYC6M=",
         "owner": "intersectmbo",
         "repo": "cardano-haskell-packages",
-        "rev": "86354939febfef01d8bb36344855f0137da434f8",
+        "rev": "993bf544a0b3fb7614403b902d835b528dc3ab5d",
         "type": "github"
       },
       "original": {
@@ -319,11 +319,11 @@
     "hackage": {
       "flake": false,
       "locked": {
-        "lastModified": 1726446873,
-        "narHash": "sha256-dWdiphXwkk4qQVFkQHuUysphOb0XO8EHJlk/8Km/7q0=",
+        "lastModified": 1726636349,
+        "narHash": "sha256-Fh+GjlpDnWtUpc02zvjULcgHZQEHuHrfKviweM7U6UY=",
         "owner": "input-output-hk",
         "repo": "hackage.nix",
-        "rev": "3126b966be7409ebfd61c88f85dbfb6ec2a51338",
+        "rev": "1d222a41735184d1fb52fa6959516cb9bf7ea319",
         "type": "github"
       },
       "original": {
@@ -374,11 +374,11 @@
         "stackage": "stackage"
       },
       "locked": {
-        "lastModified": 1726447863,
-        "narHash": "sha256-bI1GMzozXWQ/Ckukr8bXnH3QzWZ+vZC0o5RkblCXIyI=",
+        "lastModified": 1726636871,
+        "narHash": "sha256-gzu8y8h+P72ippkz8OIRGqdJ5pdETtiI69Na4Zd1gY0=",
         "owner": "input-output-hk",
         "repo": "haskell.nix",
-        "rev": "d259dac293df908b6749653122cca88b5e459c30",
+        "rev": "60f4667ee0bb9486fa1501290b1cedec7cde6066",
         "type": "github"
       },
       "original": {
@@ -543,16 +543,16 @@
     "hls-2.9": {
       "flake": false,
       "locked": {
-        "lastModified": 1718469202,
-        "narHash": "sha256-THXSz+iwB1yQQsr/PY151+2GvtoJnTIB2pIQ4OzfjD4=",
+        "lastModified": 1720003792,
+        "narHash": "sha256-qnDx8Pk0UxtoPr7BimEsAZh9g2WuTuMB/kGqnmdryKs=",
         "owner": "haskell",
         "repo": "haskell-language-server",
-        "rev": "40891bccb235ebacce020b598b083eab9dda80f1",
+        "rev": "0c1817cb2babef0765e4e72dd297c013e8e3d12b",
         "type": "github"
       },
       "original": {
         "owner": "haskell",
-        "ref": "2.9.0.0",
+        "ref": "2.9.0.1",
         "repo": "haskell-language-server",
         "type": "github"
       }
@@ -620,11 +620,11 @@
         "sphinxcontrib-haddock": "sphinxcontrib-haddock"
       },
       "locked": {
-        "lastModified": 1726096586,
-        "narHash": "sha256-Yr2nJ/hX5UWBK1rm0DnrauORLoYTS0Db0iVMwaoTCWw=",
+        "lastModified": 1726550828,
+        "narHash": "sha256-YTWh1qWo5FXuaWh7IJRVems97fwfrDR7qrGU8YTV0EQ=",
         "owner": "input-output-hk",
         "repo": "iogx",
-        "rev": "492ed9a4b0244c447c202525c618ddaede67ee59",
+        "rev": "d52f45fc0d4419fb9a10178ef04e872869958fa4",
         "type": "github"
       },
       "original": {
@@ -1065,15 +1065,16 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1726473573,
-        "narHash": "sha256-D2fZuOcz5ex9HcN2Hid24oqC7Y+yNeJ4qo8kDgtoKgg=",
-        "ref": "refs/heads/main",
-        "rev": "395c3af3437ab902479f82da9576c5f1a69bca76",
-        "revCount": 3,
+        "lastModified": 1726649807,
+        "narHash": "sha256-8diLTzgTkDcSXuOkZpb/vC9SzA0G21B0QJBP6dnTWFw=",
+        "ref": "testing",
+        "rev": "2d487d27c846f00ad147293f4d1f7162ac26bba3",
+        "revCount": 11,
         "type": "git",
         "url": "ssh://git@github.com/input-output-hk/rust-accumulator"
       },
       "original": {
+        "ref": "testing",
         "type": "git",
         "url": "ssh://git@github.com/input-output-hk/rust-accumulator"
       }
@@ -1148,11 +1149,11 @@
     "stackage": {
       "flake": false,
       "locked": {
-        "lastModified": 1726445918,
-        "narHash": "sha256-M34goAxhRqzDaVXqUo8lLnjZpppJYpr26c+X1Lhj5hU=",
+        "lastModified": 1726636633,
+        "narHash": "sha256-7Xy0rYVM4o/H1cgAYYi2EI4Y/iTxIl1cIRhB8186qOg=",
         "owner": "input-output-hk",
         "repo": "stackage.nix",
-        "rev": "8299f8d17eef21ec8365536ee9705ff66a3504f3",
+        "rev": "966645762f2f5fc3e92d96086bf32ece6c02f3c1",
         "type": "github"
       },
       "original": {

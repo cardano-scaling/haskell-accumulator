@@ -17,8 +17,8 @@ packages: haskell-accumulator
 source-repository-package
   type: git
   location: https://github.com/perturbing/cardano-base
-  tag: 76839e0e430f0a36e14ca534e6dadf311d4d0224
-  --sha256: sha256-l3FdRX0twLwkVH3DlfXw1bzxuyKpWPhjasLxTkDXv+8=
+  tag: b456baf27d55ec513bd72a6c684c95fe3ed6fabc
+  --sha256: sha256-rFUFRdmGuYzHhTsHXuBAsdNJyM6xy2BAu8NhWmsDcmg=
   subdir:
     cardano-crypto-class
     cardano-mempool
