@@ -1,7 +1,10 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE TypeApplications #-}
 
-module Bindings where
+module Bindings (
+    getPolyCommitmentG1,
+    getPolyCommitmentG2,
+) where
 
 import Cardano.Crypto.EllipticCurve.BLS12_381.Internal (Curve1, Curve2, Fr (..), Point (..), Point1, Point2, PointPtr (..), sizeFr, sizePoint, withNewPoint')
 import Control.Monad (forM, forM_, when)
