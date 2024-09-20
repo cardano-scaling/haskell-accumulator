@@ -16,3 +16,13 @@ library haskell-accumulator-lib
     , cardano-crypto-class
 
   pkgconfig-depends: librust_accumulator
+
+test-suite bindings-test
+  type:             exitcode-stdio-1.0
+  hs-source-dirs:   test
+  default-language: Haskell2010
+  main-is:          Main.hs
+  build-depends:
+    , base >=4.2 && <5
+    , cardano-crypto-class
+    , haskell-accumulator-lib

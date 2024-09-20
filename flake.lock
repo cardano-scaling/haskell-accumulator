@@ -1065,16 +1065,16 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1726649807,
-        "narHash": "sha256-8diLTzgTkDcSXuOkZpb/vC9SzA0G21B0QJBP6dnTWFw=",
-        "ref": "testing",
-        "rev": "2d487d27c846f00ad147293f4d1f7162ac26bba3",
-        "revCount": 11,
+        "lastModified": 1726634070,
+        "narHash": "sha256-Ih1XTtAh7gf1JKQTFQFZGiLOz7xW2YfKPSyK5gr/oe8=",
+        "ref": "main",
+        "rev": "7a2f554c66f90428d4dc79793e54a1aecf727e11",
+        "revCount": 10,
         "type": "git",
         "url": "ssh://git@github.com/input-output-hk/rust-accumulator"
       },
       "original": {
-        "ref": "testing",
+        "ref": "main",
         "type": "git",
         "url": "ssh://git@github.com/input-output-hk/rust-accumulator"
       }
