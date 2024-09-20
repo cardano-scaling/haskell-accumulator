@@ -28,7 +28,7 @@
     };
 
     # you need to setup a ssh key on GH to access this repo (and be in the repo team)
-    rust-accumulator.url = "git+ssh://git@github.com/input-output-hk/rust-accumulator?ref=testing";
+    rust-accumulator.url = "git+ssh://git@github.com/input-output-hk/rust-accumulator?ref=main";
 
   };
 
