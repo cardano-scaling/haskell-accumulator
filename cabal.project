@@ -9,16 +9,16 @@ repository cardano-haskell-packages
     c00aae8461a256275598500ea0e187588c35a5d5d7454fb57eac18d9edb86a56
     d4a35cd3121aa00d18544bb0ac01c3e1691d618f462c46129271bccf39f7e8ee
 index-state:
-  , hackage.haskell.org 2024-06-20T00:00:00Z
-  , cardano-haskell-packages 2024-06-20T00:00:00Z
+  , hackage.haskell.org 2024-10-08T00:00:00Z
+  , cardano-haskell-packages 2024-10-08T00:00:00Z
 
 packages: haskell-accumulator
 
 source-repository-package
   type: git
   location: https://github.com/perturbing/cardano-base
-  tag: b456baf27d55ec513bd72a6c684c95fe3ed6fabc
-  --sha256: sha256-rFUFRdmGuYzHhTsHXuBAsdNJyM6xy2BAu8NhWmsDcmg=
+  tag: c4242d11a6502bef41f65a11a79dc12e3fe6d079
+  --sha256: sha256-Cg6+UcgyEyZdq9lMH2T7YpQDAsHo2RGxh+/2l3lvk9k=
   subdir:
     cardano-crypto-class
     cardano-mempool

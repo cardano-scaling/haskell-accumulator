@@ -14,6 +14,7 @@ library haskell-accumulator-lib
   build-depends:
     , base >=4.2 && <5
     , cardano-crypto-class
+    , plutus-core ==1.35.0.0
 
   pkgconfig-depends: librust_accumulator
 
