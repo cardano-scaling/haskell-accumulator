@@ -8,13 +8,17 @@ synopsis:      "Haskell bindings for the rust accumulator lib via C"
 build-type:    Simple
 
 library haskell-accumulator-lib
-  exposed-modules:   Bindings
+  exposed-modules:
+    Bindings
+    Bindings.Internal
+
   hs-source-dirs:    lib
   default-language:  Haskell2010
   build-depends:
     , base >=4.2 && <5
+    , bytestring
     , cardano-crypto-class
-    , plutus-core ==1.35.0.0
+    , plutus-core
 
   pkgconfig-depends: librust_accumulator
 

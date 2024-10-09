@@ -1,6 +1,6 @@
 module Main where
 
-import Bindings (getPolyCommitmentG1, getPolyCommitmentG2)
+import Bindings.Internal (getPolyCommitmentG1, getPolyCommitmentG2)
 import Cardano.Crypto.EllipticCurve.BLS12_381.Internal (
     Point1 (..),
     Point2 (..),
