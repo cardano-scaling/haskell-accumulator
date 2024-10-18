@@ -32,3 +32,4 @@ source-repository-package
   --sha256:sha256-8ZVfCEQ0KaxI3beNmAYLLhqIzHRGtOGg7/E9zDq5C/0= 
   subdir:
     plutus-core
+    plutus-tx

@@ -17,7 +17,7 @@ import Foreign.Ptr (Ptr, plusPtr)
 -- [General notes on this file]
 -- This file contains the FFI bindings to the Rust library 'rust-accumulator' with
 -- source location https://github.com/input-output-hk/rust-accumulator
--- This rust lib is compiled to C and then linked using haskell.nix to the Haskell.
+-- This rust lib is compiled to C and then linked using haskell.nix to Haskell.
 -- This FFI below uses two functions from the Rust library:
 --
 -- 1. `getPolyCommitmentG1` - This function takes in a pointer to a projective g1 point and two lists of Fr elements
