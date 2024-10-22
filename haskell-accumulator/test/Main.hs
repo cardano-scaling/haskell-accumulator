@@ -41,6 +41,10 @@ generateRandomByteString n = B.pack <$> mapM (\_ -> randomRIO (0, 255)) [1 .. n]
 generateRandomSet :: Int -> IO [Element]
 generateRandomSet n = mapM (\_ -> generateRandomByteString 32) [1 .. n]
 
+-- Helper function to pick n random elements from a list
+pickRandomElements :: Int -> [a] -> IO [a]
+pickRandomElements n xs = mapM (\_ -> (xs !!) <$> randomRIO (0, length xs Prelude.- 1)) [1 .. n]
+
 -- Create test setup with a set of elements and a subset of that set
 mkTestSetup :: Int -> Int -> IO (Accumulator, [Element], [Point1], [Point2])
 mkTestSetup setSize subSetSize = do
@@ -49,7 +53,7 @@ mkTestSetup setSize subSetSize = do
     let setMap = foldl addElement emptyAccumulator set :: Accumulator
 
     -- Define a tau
-    let tau = F.Scalar 10
+    let tau = F.Scalar 22_435_875_175_126_190_499_447_740_508_185_965_837_690_552_500_527_637_822_603_658_699_938_581_184_511
 
     -- Define powers of tau
     let powerOfTauField = map (F.powModScalar tau) [0 .. (fromIntegral setSize)]
@@ -68,8 +72,8 @@ mkTestSetup setSize subSetSize = do
     let crsG1 = map (blsMult g1) powerOfTauInt :: [Point1]
     let crsG2 = map (blsMult g2) powerOfTauInt :: [Point2]
 
-    -- Define a subset we are proving
-    let subset = take subSetSize set :: [Element]
+    -- Randomly pick subSetSize elements from the set
+    subset <- pickRandomElements subSetSize set
 
     return (setMap, subset, crsG1, crsG2)
 
@@ -92,7 +96,7 @@ benchmarkProofG2 subSet setMap crsG2 = do
 main :: IO ()
 main = do
     -- Create a test setup with 1_000 elements and a subset of 1 (the proof is over the set minus the subset)
-    (setMap, subSet, crsG1, crsG2) <- mkTestSetup 1_000 1
+    (setMap, subSet, crsG1, crsG2) <- mkTestSetup 1_000_000 100
 
     -- Benchmark the two calculations
     defaultMain
