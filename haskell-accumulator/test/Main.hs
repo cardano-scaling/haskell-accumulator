@@ -3,8 +3,8 @@
 
 module Main where
 
-import Accumulator (Accumulator, Element (..), addElement, emptyAccumulator)
-import Bindings (getProofOverG1, getProofOverG2)
+import Accumulator (Accumulator, Element (..), addElement, emptyAccumulator, removeElement)
+import Bindings (getPolyCommitOverG1, getPolyCommitOverG2)
 import Cardano.Crypto.EllipticCurve.BLS12_381.Internal (
     Point1 (..),
     Point2 (..),
@@ -21,6 +21,7 @@ import Cardano.Crypto.EllipticCurve.BLS12_381.Internal (
  )
 import Criterion.Main
 import qualified Data.ByteString as B
+import Data.List (nub)
 import qualified Field as F
 import GHC.IO (unsafePerformIO)
 import PlutusTx.Numeric (
@@ -73,21 +74,22 @@ mkTestSetup setSize subSetSize = do
     let crsG2 = map (blsMult g2) powerOfTauInt :: [Point2]
 
     -- Randomly pick subSetSize elements from the set
-    subset <- pickRandomElements subSetSize set
+    subsetNonUnique <- pickRandomElements subSetSize set
+    let subset = nub subsetNonUnique
 
     return (setMap, subset, crsG1, crsG2)
 
 -- Helper to extract the result or force an error
 benchmarkProofG1 :: [Element] -> Accumulator -> [Point1] -> IO ()
 benchmarkProofG1 subSet setMap crsG1 = do
-    result <- getProofOverG1 subSet setMap crsG1
+    result <- getPolyCommitOverG1 subSet setMap crsG1
     case result of
         Left err -> error err -- Force an error to trigger computation
         Right _ -> return ()
 
 benchmarkProofG2 :: [Element] -> Accumulator -> [Point2] -> IO ()
 benchmarkProofG2 subSet setMap crsG2 = do
-    result <- getProofOverG2 subSet setMap crsG2
+    result <- getPolyCommitOverG2 subSet setMap crsG2
     case result of
         Left err -> error err -- Force an error to trigger computation
         Right _ -> return ()
@@ -96,7 +98,7 @@ benchmarkProofG2 subSet setMap crsG2 = do
 main :: IO ()
 main = do
     -- Create a test setup with 1_000 elements and a subset of 1 (the proof is over the set minus the subset)
-    (setMap, subSet, crsG1, crsG2) <- mkTestSetup 10_000 10
+    (setMap, subSet, crsG1, crsG2) <- mkTestSetup 10 2
 
     -- Benchmark the two calculations
     defaultMain
@@ -107,22 +109,38 @@ main = do
             ]
         ]
 
--- -- Get proof over G1 and G2
--- comm1 <- getProofOverG1 subSet setMap crsG1
--- comm2 <- getProofOverG2 subSet setMap crsG2
+    -- An basic E2E example.
 
--- let g1 = blsGenerator :: Point1
--- let g2 = blsGenerator :: Point2
+    -- Say we have this set of elements (note that the first argument of the mkTestSetup function call above
+    -- should be bigger than the length of this set)
+    let mySet = ["element1", "element2", "element3", "element4"] :: [Element]
+        -- We can get the offchain explicit accumulator via
+        myAcc = foldl addElement emptyAccumulator mySet :: Accumulator
 
--- -- Verify the pairing
--- case comm1 of
---     Left err -> print err
---     Right g1Commitment -> case comm2 of
---         Left err -> print err
---         Right g2Commitment -> do
---             let pt1 = millerLoop g1Commitment g2
---                 pt2 = millerLoop g1 g2Commitment
---                 pairingCheck = ptFinalVerify pt1 pt2
---             print pairingCheck
+    --  Then we can calculate the onchain representation of our accumulator via
+    accCommit <- getPolyCommitOverG2 [] myAcc crsG2
 
--- print "Run complete"
+    -- Say we want to proof the subset of the set
+    let mySubset = ["element1", "element4"] :: [Element]
+
+    -- then the proof can be calculated via
+    proof <- getPolyCommitOverG2 mySubset myAcc crsG2
+
+    -- Verify the proof onchain (but doing it with offchain code)
+    case accCommit of
+        Left err -> print $ err ++ " for accumulator"
+        Right g2AccCommit -> case proof of
+            Left err -> print $ err ++ " for proof"
+            Right g2ProofCommit -> do
+                let subsetAcc = foldl addElement emptyAccumulator mySubset :: Accumulator
+                    g1 = blsGenerator :: Point1
+                subsetCommit <- getPolyCommitOverG1 [] subsetAcc crsG1
+                case subsetCommit of
+                    Left err -> print $ err ++ " for subset accumulator"
+                    Right g1SubsetCommit -> do
+                        let pt1 = millerLoop g1 g2AccCommit
+                            pt2 = millerLoop g1SubsetCommit g2ProofCommit
+                            pairingCheck = ptFinalVerify pt1 pt2
+                        print pairingCheck
+
+    print "Run complete"

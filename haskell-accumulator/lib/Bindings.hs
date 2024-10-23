@@ -1,6 +1,6 @@
 module Bindings (
-    getProofOverG1,
-    getProofOverG2,
+    getPolyCommitOverG1,
+    getPolyCommitOverG2,
 ) where
 
 import Accumulator (Accumulator, Element, elementExists, removeElement)
@@ -43,13 +43,13 @@ collectFrs = Map.foldrWithKey collectFr (return [])
         return $ replicate count elementFr ++ rest
 
 -- | Generalized function to get a proof (works for both G1 and G2)
-getProof ::
+getCommit ::
     ([Fr] -> [crs] -> IO (Either String crs)) -> -- The function to get the commitment
     [Element] -> -- List of elements
     Accumulator -> -- Accumulator
     [crs] -> -- Common reference string (CRS)
     IO (Either String crs)
-getProof getCommitment memb acc crs = do
+getCommit getCommitment memb acc crs = do
     -- Process all elements in `memb` through the accumulator
     remainingAccumulator <- processElements memb acc
     case remainingAccumulator of
@@ -61,9 +61,9 @@ getProof getCommitment memb acc crs = do
             getCommitment frList crs
 
 -- | Given a list of elements and an accumulator + CRS, calculate the polynomial commitment of the proof of membership function for G1 proof
-getProofOverG1 :: [Element] -> Accumulator -> [Point1] -> IO (Either String Point1)
-getProofOverG1 = getProof getPolyCommitmentG1
+getPolyCommitOverG1 :: [Element] -> Accumulator -> [Point1] -> IO (Either String Point1)
+getPolyCommitOverG1 = getCommit getPolyCommitmentG1
 
 -- | Specialized function for G2 proof
-getProofOverG2 :: [Element] -> Accumulator -> [Point2] -> IO (Either String Point2)
-getProofOverG2 = getProof getPolyCommitmentG2
+getPolyCommitOverG2 :: [Element] -> Accumulator -> [Point2] -> IO (Either String Point2)
+getPolyCommitOverG2 = getCommit getPolyCommitmentG2
