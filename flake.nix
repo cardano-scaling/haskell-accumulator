@@ -27,7 +27,6 @@
       inputs.hackage.follows = "hackage";
     };
 
-    # you need to setup a ssh key on GH to access this repo (and be in the repo team)
     rust-accumulator.url = "github:cardano-scaling/rust-accumulator";
 
   };
