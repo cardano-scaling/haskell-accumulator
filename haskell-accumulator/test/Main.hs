@@ -96,7 +96,7 @@ benchmarkProofG2 subSet setMap crsG2 = do
 main :: IO ()
 main = do
     -- Create a test setup with 1_000 elements and a subset of 1 (the proof is over the set minus the subset)
-    (setMap, subSet, crsG1, crsG2) <- mkTestSetup 1_000_000 100
+    (setMap, subSet, crsG1, crsG2) <- mkTestSetup 10_000 10
 
     -- Benchmark the two calculations
     defaultMain

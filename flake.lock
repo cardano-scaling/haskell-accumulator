@@ -1067,16 +1067,15 @@
       "locked": {
         "lastModified": 1726634070,
         "narHash": "sha256-Ih1XTtAh7gf1JKQTFQFZGiLOz7xW2YfKPSyK5gr/oe8=",
-        "ref": "main",
+        "owner": "cardano-scaling",
+        "repo": "rust-accumulator",
         "rev": "7a2f554c66f90428d4dc79793e54a1aecf727e11",
-        "revCount": 10,
-        "type": "git",
-        "url": "ssh://git@github.com/input-output-hk/rust-accumulator"
+        "type": "github"
       },
       "original": {
-        "ref": "main",
-        "type": "git",
-        "url": "ssh://git@github.com/input-output-hk/rust-accumulator"
+        "owner": "cardano-scaling",
+        "repo": "rust-accumulator",
+        "type": "github"
       }
     },
     "rust-analyzer-src": {
