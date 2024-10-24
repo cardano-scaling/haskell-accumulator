@@ -3,7 +3,7 @@
 
 module Main where
 
-import Accumulator (Accumulator, Element (..), addElement, emptyAccumulator, removeElement)
+import Accumulator (Accumulator, Element (..), addElement, buildAccumulator, emptyAccumulator, removeElement)
 import Bindings (getPolyCommitOverG1, getPolyCommitOverG2)
 import Cardano.Crypto.EllipticCurve.BLS12_381.Internal (
     Point1 (..),
@@ -21,7 +21,7 @@ import Cardano.Crypto.EllipticCurve.BLS12_381.Internal (
  )
 import Criterion.Main
 import qualified Data.ByteString as B
-import Data.List (nub)
+import qualified Data.Set as Set
 import qualified Field as F
 import GHC.IO (unsafePerformIO)
 import PlutusTx.Numeric (
@@ -33,30 +33,35 @@ import PlutusTx.Numeric (
     MultiplicativeSemigroup (..),
  )
 import System.Random (randomRIO)
+import Text.Printf (printf)
 
--- Helper function to generate a random ByteString of a given length
+-- | Helper function to convert a ByteString to a hex string
+byteStringAsHex :: B.ByteString -> String
+byteStringAsHex bs = "0x" ++ concat (B.foldr' (\w s -> printf "%02x" w : s) [] bs)
+
+-- | Helper function to generate a random ByteString of a given length
 generateRandomByteString :: Int -> IO B.ByteString
 generateRandomByteString n = B.pack <$> mapM (\_ -> randomRIO (0, 255)) [1 .. n]
 
--- Generate a random set of N ByteStrings
+-- | Generate a random set of N ByteStrings
 generateRandomSet :: Int -> IO [Element]
 generateRandomSet n = mapM (\_ -> generateRandomByteString 32) [1 .. n]
 
--- Helper function to pick n random elements from a list
+-- | Helper function to pick n random elements from a list
 pickRandomElements :: Int -> [a] -> IO [a]
 pickRandomElements n xs = mapM (\_ -> (xs !!) <$> randomRIO (0, length xs Prelude.- 1)) [1 .. n]
 
--- Create test setup with a set of elements and a subset of that set
-mkTestSetup :: Int -> Int -> IO (Accumulator, [Element], [Point1], [Point2])
-mkTestSetup setSize subSetSize = do
+-- | Create test setup with a set of elements and a subset of that set
+generateTestSetup :: Int -> Int -> IO (Accumulator, [Element], [Point1], [Point2])
+generateTestSetup setSize subSetSize = do
     -- Generate a random set of ByteStrings
     set <- generateRandomSet setSize
-    let setMap = foldl addElement emptyAccumulator set :: Accumulator
+    let accumulator = buildAccumulator set
 
-    -- Define a tau
+    -- Define a tau (a large secret value that no one knows)
     let tau = F.Scalar 22_435_875_175_126_190_499_447_740_508_185_965_837_690_552_500_527_637_822_603_658_699_938_581_184_511
 
-    -- Define powers of tau
+    -- Define powers of tau (tau^0, tau^1, ..., tau^setSize+1 over the field)
     let powerOfTauField = map (F.powModScalar tau) [0 .. (fromIntegral setSize)]
 
     -- Convert the powers of tau to integers back
@@ -75,11 +80,12 @@ mkTestSetup setSize subSetSize = do
 
     -- Randomly pick subSetSize elements from the set
     subsetNonUnique <- pickRandomElements subSetSize set
-    let subset = nub subsetNonUnique
+    -- let subset = nub subsetNonUnique
+    let subset = Set.toList $ Set.fromList subsetNonUnique
 
-    return (setMap, subset, crsG1, crsG2)
+    return (accumulator, subset, crsG1, crsG2)
 
--- Helper to extract the result or force an error
+-- | Helper to extract the result or force an error
 benchmarkProofG1 :: [Element] -> Accumulator -> [Point1] -> IO ()
 benchmarkProofG1 subSet setMap crsG1 = do
     result <- getPolyCommitOverG1 subSet setMap crsG1
@@ -87,6 +93,7 @@ benchmarkProofG1 subSet setMap crsG1 = do
         Left err -> error err -- Force an error to trigger computation
         Right _ -> return ()
 
+-- | Helper to extract the result or force an error
 benchmarkProofG2 :: [Element] -> Accumulator -> [Point2] -> IO ()
 benchmarkProofG2 subSet setMap crsG2 = do
     result <- getPolyCommitOverG2 subSet setMap crsG2
@@ -94,53 +101,67 @@ benchmarkProofG2 subSet setMap crsG2 = do
         Left err -> error err -- Force an error to trigger computation
         Right _ -> return ()
 
--- Main function with benchmarking
-main :: IO ()
-main = do
-    -- Create a test setup with 1_000 elements and a subset of 1 (the proof is over the set minus the subset)
-    (setMap, subSet, crsG1, crsG2) <- mkTestSetup 10 2
-
-    -- Benchmark the two calculations
+-- | Run benchmarks for proof calculations
+runBenchmarks :: IO ()
+runBenchmarks = do
+    (accumulator, subSet, crsG1, crsG2) <- generateTestSetup 1_000 0
     defaultMain
         [ bgroup
             "proof calculations"
-            [ bench "getProofOverG1" $ nfIO (benchmarkProofG1 subSet setMap crsG1)
-            , bench "getProofOverG2" $ nfIO (benchmarkProofG2 subSet setMap crsG2)
+            [ bench "getProofOverG1" $ nfIO (benchmarkProofG1 subSet accumulator crsG1)
+            , bench "getProofOverG2" $ nfIO (benchmarkProofG2 subSet accumulator crsG2)
             ]
         ]
 
-    -- An basic E2E example.
+-- | Run an end-to-end example
+runE2EExample :: IO ()
+runE2EExample = do
+    -- Create a test setup with 1_000 elements and a subset of size 0 (the proof is over the set minus the subset, so this is a good test case)
+    (accumulator, subSet, crsG1, crsG2) <- generateTestSetup 1_000 0
 
-    -- Say we have this set of elements (note that the first argument of the mkTestSetup function call above
-    -- should be bigger than the length of this set)
-    let mySet = ["element1", "element2", "element3", "element4"] :: [Element]
+    -- Say we have this set of elements (note that the first argument of the generateTestSetup function call above
+    -- should be bigger than the length of this set, as we use the CRS from there)
+    let mySet = ["element1", "element2", "element3", "element4", "element5", "element6", "element7", "element8", "element9", "element10"] :: [Element]
         -- We can get the offchain explicit accumulator via
-        myAcc = foldl addElement emptyAccumulator mySet :: Accumulator
+        myAcc = buildAccumulator mySet
 
     --  Then we can calculate the onchain representation of our accumulator via
     accCommit <- getPolyCommitOverG2 [] myAcc crsG2
 
     -- Say we want to proof the subset of the set
-    let mySubset = ["element1", "element4"] :: [Element]
+    let mySubset = ["element3", "element9"] :: [Element]
 
     -- then the proof can be calculated via
     proof <- getPolyCommitOverG2 mySubset myAcc crsG2
 
     -- Verify the proof onchain (but doing it with offchain code)
-    case accCommit of
-        Left err -> print $ err ++ " for accumulator"
-        Right g2AccCommit -> case proof of
-            Left err -> print $ err ++ " for proof"
-            Right g2ProofCommit -> do
-                let subsetAcc = foldl addElement emptyAccumulator mySubset :: Accumulator
-                    g1 = blsGenerator :: Point1
-                subsetCommit <- getPolyCommitOverG1 [] subsetAcc crsG1
-                case subsetCommit of
-                    Left err -> print $ err ++ " for subset accumulator"
-                    Right g1SubsetCommit -> do
-                        let pt1 = millerLoop g1 g2AccCommit
-                            pt2 = millerLoop g1SubsetCommit g2ProofCommit
-                            pairingCheck = ptFinalVerify pt1 pt2
-                        print pairingCheck
+    case (accCommit, proof) of
+        (Left err, _) -> print $ err ++ " for accumulator"
+        (_, Left err) -> print $ err ++ " for proof"
+        (Right g2AccCommit, Right g2ProofCommit) -> do
+            let subsetAcc = buildAccumulator mySubset
+            subsetCommit <- getPolyCommitOverG1 [] subsetAcc crsG1
+            case subsetCommit of
+                Left err -> print $ err ++ " for subset accumulator"
+                Right g1SubsetCommit -> do
+                    let g1 = blsGenerator :: Point1
+                        pt1 = millerLoop g1 g2AccCommit
+                        pt2 = millerLoop g1SubsetCommit g2ProofCommit
+                        pairingCheck = ptFinalVerify pt1 pt2
+                        accBS = blsCompress g2AccCommit
+                        proofBS = blsCompress g2ProofCommit
+                    print "Proving that the subset is in the set for:"
+                    print $ "Subset: " ++ show mySubset
+                    print $ "With proof: " ++ show (byteStringAsHex proofBS)
+                    print $ "Set: " ++ show mySet
+                    print $ "With accumulator commitment: " ++ show (byteStringAsHex accBS)
+                    print $ "The proof is: " ++ show pairingCheck
 
-    print "Run complete"
+    -- Verify the proof onchain (but doing it with offchain code)
+    print "E2E run complete"
+
+-- Main function with benchmarking and an E2E example
+main :: IO ()
+main = do
+    runBenchmarks
+    runE2EExample

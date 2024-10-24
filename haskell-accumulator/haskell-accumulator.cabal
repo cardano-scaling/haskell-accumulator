@@ -35,7 +35,9 @@ test-suite bindings-test
     , base >=4.2 && <5
     , bytestring
     , cardano-crypto-class
+    , containers
     , criterion
     , haskell-accumulator-lib
+    , plutus-core
     , plutus-tx
     , random
