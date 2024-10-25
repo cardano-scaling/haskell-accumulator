@@ -1065,11 +1065,11 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1726634070,
-        "narHash": "sha256-Ih1XTtAh7gf1JKQTFQFZGiLOz7xW2YfKPSyK5gr/oe8=",
+        "lastModified": 1729846295,
+        "narHash": "sha256-DOEEZzjhkY804phcK3MidXptyPstBTE5NoJmtsJb1gw=",
         "owner": "cardano-scaling",
         "repo": "rust-accumulator",
-        "rev": "7a2f554c66f90428d4dc79793e54a1aecf727e11",
+        "rev": "ea628ba45e7f9ce396a578161b7b10f919319f9a",
         "type": "github"
       },
       "original": {
