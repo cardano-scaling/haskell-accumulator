@@ -16,7 +16,7 @@ import Foreign.Ptr (Ptr, plusPtr)
 
 -- [General notes on this file]
 -- This file contains the FFI bindings to the Rust library 'rust-accumulator' with
--- source location https://github.com/input-output-hk/rust-accumulator
+-- source location https://github.com/cardano-scaling/rust-accumulator
 -- This rust lib is compiled to C and then linked using haskell.nix to Haskell.
 -- This FFI below uses two functions from the Rust library:
 --
@@ -56,33 +56,26 @@ getPolyCommitmentG2_ frs pts = do
             withForeignPtr ptPtr $ \pt ->
                 get_poly_commitment_g2 out fr (fromIntegral $ length frs) pt (fromIntegral $ length pts)
 
--- | Safe version of getPolyCommitmentG1 that performs bounds checking.
+-- | Safe version of getPolyCommitmentG1_ that performs bounds checking.
 getPolyCommitmentG1 :: [Fr] -> [Point1] -> IO (Either String Point1)
 getPolyCommitmentG1 frs pts = do
-    if null frs
-        then return $ Left "The scalar list cannot be empty."
+    let ptsExpectedSize = length frs + 1
+    if length pts < ptsExpectedSize
+        then return $ Left "The G1 points list must be at least one element larger than the scalar list."
         else do
-            let ptsExpectedSize = length frs + 1
-            if length pts < ptsExpectedSize
-                then return $ Left "The G1 points list must be at least one element larger than the scalar list."
-                else do
-                    result <- getPolyCommitmentG1_ frs (take ptsExpectedSize pts)
-                    return $ Right result
+            result <- getPolyCommitmentG1_ frs (take ptsExpectedSize pts)
+            return $ Right result
 
--- | Safe version of getPolyCommitmentG2 that performs bounds checking.
+-- | Safe version of getPolyCommitmentG2_ that performs bounds checking.
 getPolyCommitmentG2 :: [Fr] -> [Point2] -> IO (Either String Point2)
 getPolyCommitmentG2 frs pts = do
-    -- Check if the list of Fr elements is empty
-    if null frs
-        then return $ Left "The scalar list cannot be empty."
+    -- Check if the list of Point2 is at least one element larger than Fr
+    let ptsExpectedSize = length frs + 1
+    if length pts < ptsExpectedSize
+        then return $ Left "The G2 points list must be at least one element larger than the scalar list."
         else do
-            -- Check if the list of Point2 is at least one element larger than Fr
-            let ptsExpectedSize = length frs + 1
-            if length pts < ptsExpectedSize
-                then return $ Left "The G2 points list must be at least one element larger than the scalar list."
-                else do
-                    result <- getPolyCommitmentG2_ frs (take ptsExpectedSize pts)
-                    return $ Right result
+            result <- getPolyCommitmentG2_ frs (take ptsExpectedSize pts)
+            return $ Right result
 
 -- [Helper functions]
 

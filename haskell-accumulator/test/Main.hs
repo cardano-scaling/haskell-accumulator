@@ -129,7 +129,7 @@ runE2EExample = do
     accCommit <- getPolyCommitOverG2 [] myAcc crsG2
 
     -- Say we want to proof the subset of the set
-    let mySubset = ["element3", "element9"] :: [Element]
+    let mySubset = mySet -- ["element3", "element9"] :: [Element]
 
     -- then the proof can be calculated via
     proof <- getPolyCommitOverG2 mySubset myAcc crsG2
@@ -155,10 +155,8 @@ runE2EExample = do
                     print $ "With proof: " ++ show (byteStringAsHex proofBS)
                     print $ "Set: " ++ show mySet
                     print $ "With accumulator commitment: " ++ show (byteStringAsHex accBS)
-                    print $ "The proof is: " ++ show pairingCheck
-
-    -- Verify the proof onchain (but doing it with offchain code)
-    print "E2E run complete"
+                    print $ "The proof is evaluated as: " ++ show pairingCheck
+                    print "E2E run complete"
 
 -- Main function with benchmarking and an E2E example
 main :: IO ()
