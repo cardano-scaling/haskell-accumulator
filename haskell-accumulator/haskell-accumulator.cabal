@@ -7,7 +7,7 @@ maintainer:    thomas.vellekoop@iohk.io
 synopsis:      "Haskell bindings for the rust accumulator lib via C"
 build-type:    Simple
 
-library haskell-accumulator-lib
+library
   exposed-modules:
     Accumulator
     Bindings
@@ -37,7 +37,7 @@ test-suite bindings-test
     , cardano-crypto-class
     , containers
     , criterion
-    , haskell-accumulator-lib
+    , haskell-accumulator
     , plutus-core
     , plutus-tx
     , random
