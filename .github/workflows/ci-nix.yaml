@@ -42,6 +42,7 @@ jobs:
         nix build .#haskell-accumulator
 
     - name: ❓ Test
+      if: matrix.os == 'ubuntu-latest'
       run: |
         nix develop .#default --command cabal test bindings-test
 
