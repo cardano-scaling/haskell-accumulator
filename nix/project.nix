@@ -8,12 +8,13 @@ let
     compiler-nix-name = "ghc96";
     shell.withHoogle = false;
     inputMap = {
-      "https://chap.intersectmbo.org/" = inputs.iogx.inputs.CHaP;
+      "https://chap.intersectmbo.org/" = inputs.CHaP;
     };
   });
 
   project = lib.iogx.mkHaskellProject {
     inherit cabalProject;
+    inherit system;
     shellArgs = repoRoot.nix.shell;
   };
 
