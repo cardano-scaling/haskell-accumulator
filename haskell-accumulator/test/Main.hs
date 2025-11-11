@@ -86,20 +86,18 @@ generateTestSetup setSize subSetSize = do
     return (accumulator, subset, crsG1, crsG2)
 
 -- | Helper to extract the result or force an error
-benchmarkProofG1 :: [Element] -> Accumulator -> [Point1] -> IO ()
-benchmarkProofG1 subSet setMap crsG1 = do
-    result <- getPolyCommitOverG1 subSet setMap crsG1
-    case result of
+benchmarkProofG1 :: [Element] -> Accumulator -> [Point1] -> ()
+benchmarkProofG1 subSet setMap crsG1 =
+    case getPolyCommitOverG1 subSet setMap crsG1 of
         Left err -> error err -- Force an error to trigger computation
-        Right _ -> return ()
+        Right _ -> ()
 
 -- | Helper to extract the result or force an error
-benchmarkProofG2 :: [Element] -> Accumulator -> [Point2] -> IO ()
-benchmarkProofG2 subSet setMap crsG2 = do
-    result <- getPolyCommitOverG2 subSet setMap crsG2
-    case result of
+benchmarkProofG2 :: [Element] -> Accumulator -> [Point2] -> ()
+benchmarkProofG2 subSet setMap crsG2 =
+    case getPolyCommitOverG2 subSet setMap crsG2 of
         Left err -> error err -- Force an error to trigger computation
-        Right _ -> return ()
+        Right _ -> ()
 
 -- | Run benchmarks for proof calculations
 runBenchmarks :: IO ()
@@ -108,8 +106,8 @@ runBenchmarks = do
     defaultMain
         [ bgroup
             "proof calculations"
-            [ bench "getProofOverG1" $ nfIO (benchmarkProofG1 subSet accumulator crsG1)
-            , bench "getProofOverG2" $ nfIO (benchmarkProofG2 subSet accumulator crsG2)
+            [ bench "getProofOverG1" $ whnf (\() -> benchmarkProofG1 subSet accumulator crsG1) ()
+            , bench "getProofOverG2" $ whnf (\() -> benchmarkProofG2 subSet accumulator crsG2) ()
             ]
         ]
 
@@ -126,13 +124,13 @@ runE2EExample = do
         myAcc = buildAccumulator mySet
 
     --  Then we can calculate the onchain representation of our accumulator via
-    accCommit <- getPolyCommitOverG2 [] myAcc crsG2
+    let accCommit = getPolyCommitOverG2 [] myAcc crsG2
 
-    -- Say we want to proof the subset of the set
-    let mySubset = mySet -- ["element3", "element9"] :: [Element]
+        -- Say we want to proof the subset of the set
+        mySubset = mySet -- ["element3", "element9"] :: [Element]
 
-    -- then the proof can be calculated via
-    proof <- getPolyCommitOverG2 mySubset myAcc crsG2
+        -- then the proof can be calculated via
+        proof = getPolyCommitOverG2 mySubset myAcc crsG2
 
     -- Verify the proof onchain (but doing it with offchain code)
     case (accCommit, proof) of
@@ -140,7 +138,7 @@ runE2EExample = do
         (_, Left err) -> print $ err ++ " for proof"
         (Right g2AccCommit, Right g2ProofCommit) -> do
             let subsetAcc = buildAccumulator mySubset
-            subsetCommit <- getPolyCommitOverG1 [] subsetAcc crsG1
+                subsetCommit = getPolyCommitOverG1 [] subsetAcc crsG1
             case subsetCommit of
                 Left err -> print $ err ++ " for subset accumulator"
                 Right g1SubsetCommit -> do
