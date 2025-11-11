@@ -1,0 +1,78 @@
+name: "CI"
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+  # Allows to trigger runs on any branch
+  workflow_dispatch:
+
+permissions:
+  checks: write
+  pull-requests: write
+
+jobs:
+  flake-check:
+    name: "Nix Flake Check"
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+
+    - name: ❄ Setup Nix
+      uses: cachix/install-nix-action@v30
+      with:
+        extra_nix_config: |
+          accept-flake-config = true
+          log-lines = 1000
+
+    - name: 📐 Check flake
+      run: |
+        nix flake check -L
+
+  build-test:
+    name: "Build & test"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+
+    - name: ❄ Setup Nix
+      uses: cachix/install-nix-action@v30
+      with:
+        extra_nix_config: |
+          accept-flake-config = true
+          log-lines = 1000
+
+    - name: 🔨 Build
+      run: |
+        nix build .#haskell-accumulator
+
+    - name: ❓ Test
+      run: |
+        nix develop .#default --command cabal test bindings-test
+
+  haddock:
+    name: "Build haddock using nix"
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+
+    - name: ❄ Setup Nix
+      uses: cachix/install-nix-action@v30
+      with:
+        extra_nix_config: |
+          accept-flake-config = true
+          log-lines = 1000
+
+    - name: 📚 Documentation (Haddock)
+      run: |
+        nix build .#haskell-accumulator --option documentation true
+
