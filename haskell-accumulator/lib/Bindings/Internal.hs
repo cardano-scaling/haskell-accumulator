@@ -13,6 +13,7 @@ import Data.Void (Void)
 import Foreign (ForeignPtr, copyBytes, mallocForeignPtrBytes, withForeignPtr)
 import Foreign.C.Types (CSize (..))
 import Foreign.Ptr (Ptr, plusPtr)
+import System.IO.Unsafe (unsafePerformIO)
 
 -- [General notes on this file]
 -- This file contains the FFI bindings to the Rust library 'rust-accumulator' with
@@ -57,8 +58,8 @@ getPolyCommitmentG2_ frs pts = do
                 get_poly_commitment_g2 out fr (fromIntegral $ length frs) pt (fromIntegral $ length pts)
 
 -- | Safe version of getPolyCommitmentG1_ that performs bounds checking.
-getPolyCommitmentG1 :: [Fr] -> [Point1] -> IO (Either String Point1)
-getPolyCommitmentG1 frs pts = do
+getPolyCommitmentG1 :: [Fr] -> [Point1] -> Either String Point1
+getPolyCommitmentG1 frs pts = unsafePerformIO $ do
     let ptsExpectedSize = length frs + 1
     if length pts < ptsExpectedSize
         then return $ Left "The G1 points list must be at least one element larger than the scalar list."
@@ -67,8 +68,8 @@ getPolyCommitmentG1 frs pts = do
             return $ Right result
 
 -- | Safe version of getPolyCommitmentG2_ that performs bounds checking.
-getPolyCommitmentG2 :: [Fr] -> [Point2] -> IO (Either String Point2)
-getPolyCommitmentG2 frs pts = do
+getPolyCommitmentG2 :: [Fr] -> [Point2] -> Either String Point2
+getPolyCommitmentG2 frs pts = unsafePerformIO $ do
     -- Check if the list of Point2 is at least one element larger than Fr
     let ptsExpectedSize = length frs + 1
     if length pts < ptsExpectedSize
