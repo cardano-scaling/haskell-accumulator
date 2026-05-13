@@ -1,6 +1,6 @@
 cabal-version: 3.0
 name:          haskell-accumulator
-version:       1.1.0.0
+version:       1.2.0.0
 license:       Apache-2.0
 author:        Thomas Vellekoop
 maintainer:    thomas.vellekoop@iohk.io
@@ -19,7 +19,7 @@ library
   build-depends:
     , base >=4.2 && <5
     , bytestring
-    , cardano-crypto-class
+    , cardano-crypto-class ^>=2.3
     , containers
     , plutus-core
     , plutus-tx
@@ -34,7 +34,7 @@ test-suite bindings-test
   build-depends:
     , base >=4.2 && <5
     , bytestring
-    , cardano-crypto-class
+    , cardano-crypto-class ^>=2.3
     , containers
     , criterion
     , haskell-accumulator
