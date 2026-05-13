@@ -3,6 +3,20 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [PVP Versioning](https://pvp.haskell.org).
 
+## [1.2.0.0] - 2026-05-13
+
+### Changed
+
+- Bump `cardano-crypto-class` dependency to `^>=2.3` and adapt `Bindings.Internal`
+  to its updated API (`FrPtr`, `PointArrayPtr`, `withFr`, `withPointArray`).
+
+### Removed
+
+- Removed unused internal helpers `splitFr`, `splitPoint1`, and `splitPoint2`
+- Replaced `concatFr`, `concatPoint1`, and `concatPoint2` with equivalent
+  internal helpers adapted to the opaque types introduced in
+  `cardano-crypto-class` 2.3.
+
 ## [1.1.0.0] - 2025-11-11
 
 ### Changed
